@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
-    int[] pagers = {R.mipmap.a, R.mipmap.b, R.mipmap.c, R.mipmap.d, R.mipmap.e};
+    int[] pagers = {R.mipmap.a, R.mipmap.a, R.mipmap.a, R.mipmap.a, R.mipmap.a};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +23,9 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-
+        viewPager.setPageMargin(20);
         viewPager.setOffscreenPageLimit(3);
+        viewPager.setPageTransformer(true,new AlphaPageTransforms());
 
         viewPager.setAdapter(new PagerAdapter() {
             @Override
@@ -55,5 +56,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private class AlphaPageTransforms implements  ViewPager.PageTransformer{
+
+        private static final float DEFFAULT_MIN_ALPHA=0.2f;
+        private float mMinAlpha = DEFFAULT_MIN_ALPHA;
+        @Override
+        public void transformPage(View page, float position) {
+
+            if(position<-1){
+                page.setAlpha(mMinAlpha);
+            }else if(position<=1){
+                if(position<0){
+                    float factor = mMinAlpha+(1-mMinAlpha)*(1+position);
+                    page.setAlpha(factor);
+                }else{
+                    float factor = mMinAlpha+(1-mMinAlpha)*(1-position);
+                    page.setAlpha(factor);
+                }
+            }else{
+                page.setAlpha(mMinAlpha);
+            }
+        }
     }
 }
